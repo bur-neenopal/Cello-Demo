@@ -122,6 +122,7 @@ app.post('/api/payment', async (req, res) => {
 
         // 3. Only notify Cello if user was referred
         if (user.referralCode) {
+            console.log("referralCode", user.referralCode)
             const conversionResponse = await fetch('https://api.sandbox.cello.so/v1/conversions', {
                 method: 'POST',
                 headers: {
