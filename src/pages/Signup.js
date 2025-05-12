@@ -50,6 +50,7 @@ const Signup = () => {
         setError('');
 
         try {
+            console.log("Sending formData to signupUser:", formData);
             const user = await signupUser(formData); // This will now include referralCode
             localStorage.setItem('currentUser', JSON.stringify(user));
             navigate('/payment');

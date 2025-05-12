@@ -61,7 +61,7 @@ app.get('/signup', (req, res) => {
         // In a real implementation, you would store this in a session or cookie
         console.log(`Referral code received: ${referralCode}`);
     }
-
+    console.log("referralCode", referralCode);
     // In a real implementation, you would redirect to the signup page
     // For now, just send a response
     res.json({ message: 'Referral code received', referralCode });
