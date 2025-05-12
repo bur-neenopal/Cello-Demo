@@ -33,6 +33,7 @@ const Payment = () => {
             }
 
             try {
+                console.log("referralCode", referralCode)
                 const success = await initializeCello(currentUser.id, {
                     firstName: currentUser.firstName,
                     lastName: currentUser.lastName,
