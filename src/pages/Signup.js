@@ -23,6 +23,7 @@ const Signup = () => {
 
         if (referralCode) {
             // Store referral code in form data
+            sessionStorage.setItem('referralCode', referralCode); // For Cello initialization later
             setFormData(prev => ({
                 ...prev,
                 referralCode

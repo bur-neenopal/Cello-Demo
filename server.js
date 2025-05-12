@@ -3,6 +3,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const app = express();
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 app.use(cors());
 app.use(express.static('public'));
@@ -71,30 +72,25 @@ const users = [];
 // User signup endpoint
 app.post('/api/users', (req, res) => {
     try {
-        const { firstName, lastName, email, password } = req.body;
+        const { firstName, lastName, email, password, referralCode } = req.body;
 
-        // Simple validation
         if (!firstName || !lastName || !email || !password) {
             return res.status(400).json({ error: 'All fields are required' });
         }
 
-        // Generate a unique ID (in a real app, this would be done by your DB)
         const id = `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-        // Create new user
         const newUser = {
             id,
             firstName,
             lastName,
             email,
-            // In a real app, you would hash this password
-            password
+            password,
+            referralCode: referralCode || null, // track if referral code was used
         };
 
-        // Save user to our mock database
         users.push(newUser);
 
-        // Return user without password
         const { password: _, ...userWithoutPassword } = newUser;
         res.status(201).json(userWithoutPassword);
     } catch (error) {
@@ -102,6 +98,62 @@ app.post('/api/users', (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 });
+
+// Add this helper function to server.js
+const getEmailFromUserId = (userId) => {
+    // Find user in your mock database
+    const user = users.find(u => u.id === userId);
+    return user ? user.email : 'no-email@example.com';
+};
+
+
+app.post('/api/payment', async (req, res) => {
+    const { userId, amount } = req.body;
+
+    try {
+        // 1. Find the user in your mock database
+        const user = users.find(u => u.id === userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // 2. Track payment in your database (mock implementation)
+        console.log(`Payment of $${amount} recorded for user ${userId} (${user.email})`);
+
+        // 3. Only notify Cello if user was referred
+        if (user.referralCode) {
+            const conversionResponse = await fetch('https://api.sandbox.cello.so/v1/conversions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${process.env.PRODUCT_SECRET}`
+                },
+                body: JSON.stringify({
+                    productUserId: userId,
+                    amount: amount * 100, // Convert dollars to cents
+                    currency: 'USD',
+                    email: user.email,
+                    metadata: {
+                        product: "Workspace Booking",
+                        booking_id: `booking-${Date.now()}`
+                    }
+                })
+            });
+
+            if (!conversionResponse.ok) {
+                const error = await conversionResponse.json();
+                console.error("Cello API error:", error);
+                return res.status(500).json({ error: "Cello conversion failed" });
+            }
+        }
+
+        res.status(200).json({ success: true });
+    } catch (error) {
+        console.error("Payment processing error:", error);
+        res.status(500).json({ error: "Payment processing failed" });
+    }
+});
+
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

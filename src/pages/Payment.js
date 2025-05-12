@@ -22,7 +22,16 @@ const Payment = () => {
         const currentUser = JSON.parse(currentUserStr);
 
         // Initialize Cello
+        // Initialize Cello
         const setupCello = async () => {
+            const referralCode = sessionStorage.getItem('referralCode'); // 👈
+
+            if (!referralCode) {
+                console.log("No referral code found — skipping Cello init."); // 👈
+                setLoading(false);
+                return;
+            }
+
             try {
                 const success = await initializeCello(currentUser.id, {
                     firstName: currentUser.firstName,
@@ -32,6 +41,9 @@ const Payment = () => {
                 });
 
                 setCelloInitialized(success);
+
+                // Optional: clear referral code so Cello doesn’t re-init on refresh
+                sessionStorage.removeItem('referralCode'); // 👈
             } catch (error) {
                 console.error("Failed to initialize Cello:", error);
             } finally {
@@ -39,13 +51,37 @@ const Payment = () => {
             }
         };
 
+
         setupCello();
     }, [navigate]);
+    const [paymentAmount, setPaymentAmount] = useState(50); // default to $50
 
-    const handlePayment = () => {
-        navigate('/confirmation');
+    const handlePayment = async () => {
+        try {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/payment`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userId: currentUser.id,
+                    amount: paymentAmount,
+                    currency: 'USD'
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                navigate('/confirmation');
+            } else {
+                alert(data.error || "Payment failed");
+            }
+        } catch (error) {
+            console.error("Payment error:", error);
+            alert("Payment processing error");
+        }
     };
-
     const inputStyle = {
         width: '100%',
         padding: '0.8rem',
@@ -88,6 +124,18 @@ const Payment = () => {
                     }}>
                     </div>
                 )}
+                <div style={{ marginBottom: '1.5rem' }}>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+                        Payment Amount (USD)
+                    </label>
+                    <select
+                        value={paymentAmount}
+                        onChange={(e) => setPaymentAmount(Number(e.target.value))}
+                        style={{ ...inputStyle, width: '100%' }}
+                    >
+                        <option value="50">$50 (PRO PLAN)</option>
+                    </select>
+                </div>
 
                 <form>
                     <div style={{ marginBottom: '1.5rem' }}>
