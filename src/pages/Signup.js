@@ -19,7 +19,7 @@ const Signup = () => {
     useEffect(() => {
         // Get referral code from URL if present
         const params = new URLSearchParams(window.location.search);
-        const referralCode = params.get('ref');
+        const referralCode = params.get('ucc');
 
         if (referralCode) {
             // Store referral code in form data
