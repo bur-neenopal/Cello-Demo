@@ -54,9 +54,7 @@ const Confirmation = () => {
                 borderRadius: '8px',
                 textAlign: 'center'
             }}>
-                <div style={{ fontSize: '5rem', marginBottom: '1rem' }}>
-                    ✅
-                </div>
+
                 <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>
                     Thank You for Your Booking!
                 </h2>

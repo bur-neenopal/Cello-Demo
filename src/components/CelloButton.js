@@ -51,7 +51,7 @@ const CelloButton = () => {
                 transition: 'all 0.3s ease'
             }}
         >
-            <span role="img" aria-label="gift">🎁</span> {buttonText}
+            <span role="img" aria-label="gift">#</span> {buttonText}
         </button>
     );
 };
