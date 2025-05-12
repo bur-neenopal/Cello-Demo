@@ -1,11 +1,19 @@
-
 // src/pages/Landing.js
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 
-
 const Landing = () => {
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const referralCode = params.get('ucc');
+
+        if (referralCode) {
+            localStorage.setItem('referralCode', referralCode);
+            console.log("Referral code saved to localStorage:", referralCode);
+        }
+    }, []);
+
     return (
         <div>
             <Navbar />
