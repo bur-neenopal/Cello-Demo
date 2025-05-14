@@ -58,8 +58,7 @@ const Payment = () => {
     const handlePayment = async () => {
         try {
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            const uccData = await window.celloAttribution.get();
-            const referralCode = uccData?.ucc;
+            const referralCode = localStorage.getItem('referralCode');
 
             console.log("Processing payment with referral code:", referralCode);
 
