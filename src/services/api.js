@@ -29,6 +29,7 @@ export const getCelloToken = async (userId) => {
         throw error;
     }
 };
+
 // Get user data
 export const getUser = async (userId) => {
     try {
@@ -36,6 +37,17 @@ export const getUser = async (userId) => {
         return response.data;
     } catch (error) {
         console.error("User fetch error:", error);
+        throw error;
+    }
+};
+
+// Process payment and handle referral
+export const processPayment = async (paymentData) => {
+    try {
+        const response = await api.post('/api/payment', paymentData);
+        return response.data;
+    } catch (error) {
+        console.error("Payment processing error:", error);
         throw error;
     }
 };
