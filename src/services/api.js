@@ -43,11 +43,14 @@ export const getUser = async (userId) => {
 
 // Process payment and handle referral
 export const processPayment = async (paymentData) => {
+    const url = `${API_URL}/api/payment`; // Explicitly construct URL
+    console.log('Making payment request to:', url); // <-- ADD THIS
+
     try {
-        const response = await api.post('/api/payment', paymentData);
+        const response = await axios.post(url, paymentData);
         return response.data;
     } catch (error) {
-        console.error("Payment processing error:", error);
+        console.error("Payment error - Full URL:", url, error);
         throw error;
     }
 };
