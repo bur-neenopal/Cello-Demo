@@ -60,6 +60,7 @@ const Payment = () => {
     const handlePayment = async () => {
         try {
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            console.log('Starting payment for user:', currentUser.id);
 
             const response = await fetch(`${process.env.REACT_APP_API_URL}/api/payment`, {
                 method: 'POST',
@@ -72,15 +73,34 @@ const Payment = () => {
             });
 
             const data = await response.json();
+            console.log('Payment API response:', data);
 
             if (response.ok) {
+                console.log('Payment succeeded');
+
+                // Refresh Cello widget if exists
+                if (window.Cello) {
+                    try {
+                        window.Cello.refresh();
+                        console.log('Cello widget refreshed');
+                    } catch (widgetError) {
+                        console.warn('Cello refresh failed:', widgetError);
+                    }
+                }
+
                 navigate('/confirmation');
             } else {
+                console.error('Payment failed:', data.error);
                 alert(data.error || "Payment failed");
             }
         } catch (error) {
-            console.error("Payment error:", error);
-            alert("Payment processing error");
+            console.error('Payment processing error:', error);
+
+            const errorMsg = error.response
+                ? await error.response.text()
+                : error.message;
+
+            alert(`Payment error: ${errorMsg}`);
         }
     };
     const inputStyle = {
