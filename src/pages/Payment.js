@@ -6,6 +6,7 @@ import CelloButton from '../components/CelloButton';
 import { initializeCello } from '../services/cello';
 import { processPayment } from '../services/api'; // Import the new payment function
 
+
 const Payment = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
@@ -57,7 +58,8 @@ const Payment = () => {
     const handlePayment = async () => {
         try {
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            const referralCode = localStorage.getItem('referralCode');
+            const uccData = await window.celloAttribution.get();
+            const referralCode = uccData?.ucc;
 
             console.log("Processing payment with referral code:", referralCode);
 
