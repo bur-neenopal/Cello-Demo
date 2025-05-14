@@ -5,14 +5,18 @@ import Navbar from '../components/Navbar';
 
 const Landing = () => {
     useEffect(() => {
+        // Look for both 'ucc' (direct Cello param) and 'ref' (your app's param)
         const params = new URLSearchParams(window.location.search);
-        const referralCode = params.get('ucc');
+        const referralCode = params.get('ucc') || params.get('ref');
 
         if (referralCode) {
             localStorage.setItem('referralCode', referralCode);
             console.log("Referral code saved to localStorage:", referralCode);
         }
     }, []);
+
+    // Check if we have a referral code
+    const hasReferral = localStorage.getItem('referralCode');
 
     return (
         <div>
@@ -31,6 +35,24 @@ const Landing = () => {
                     Whether you need a quiet office, a meeting room, or a collaborative space,
                     we've got you covered.
                 </p>
+
+                {hasReferral && (
+                    <div style={{
+                        backgroundColor: '#e8f5e9',
+                        padding: '1rem',
+                        borderRadius: '8px',
+                        marginBottom: '2rem',
+                        color: '#2e7d32'
+                    }}>
+                        <p style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                            You've been referred by a friend!
+                        </p>
+                        <p>
+                            Sign up now to claim your special offer.
+                        </p>
+                    </div>
+                )}
+
                 <Link to="/signup">
                     <button style={{
                         backgroundColor: '#4a6bff',
@@ -42,7 +64,7 @@ const Landing = () => {
                         cursor: 'pointer',
                         fontWeight: 'bold'
                     }}>
-                        Get Started
+                        {hasReferral ? 'Claim Your Offer' : 'Get Started'}
                     </button>
                 </Link>
             </div>

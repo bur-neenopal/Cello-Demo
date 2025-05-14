@@ -14,12 +14,20 @@ const Signup = () => {
     });
 
     useEffect(() => {
-        const referralCode = localStorage.getItem('referralCode');
+        // Check URL first for ?ucc parameter, then fallback to localStorage
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlCode = urlParams.get('ucc');
+        const storedCode = localStorage.getItem('referralCode');
+
+        const referralCode = urlCode || storedCode;
+
         if (referralCode) {
+            // Store in both state and localStorage to ensure it's available
             setFormData(prev => ({
                 ...prev,
                 referralCode
             }));
+            localStorage.setItem('referralCode', referralCode);
             console.log(`Signing up with referral code: ${referralCode}`);
         }
     }, []);

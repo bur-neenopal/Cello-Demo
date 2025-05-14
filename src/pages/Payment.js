@@ -57,12 +57,16 @@ const Payment = () => {
     const handlePayment = async () => {
         try {
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const referralCode = localStorage.getItem('referralCode');
 
-            // Use the imported processPayment function
+            console.log("Processing payment with referral code:", referralCode);
+
+            // Include referral code in payment data
             await processPayment({
                 userId: currentUser.id,
                 amount: paymentAmount,
-                currency: 'USD'
+                currency: 'USD',
+                referralCode: referralCode // Explicitly include referral code
             });
 
             navigate('/confirmation');
