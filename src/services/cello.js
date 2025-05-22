@@ -57,7 +57,8 @@ const initializeCelloInstance = async (userId, userDetails) => {
 
         // Get token from your backend
         console.log("Getting Cello token for userId:", userId);
-        const { token } = await getCelloToken(userId);
+        // const { token } = await getCelloToken(userId);
+        const token = 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJwcm9kdWN0SWQiOiJzdGFnZS1hcHAubW9ra3VwLmFpIiwicHJvZHVjdFVzZXJJZCI6IjMifQ.mSxpWVUT5za2EUeUivCydyDvO97JeprVa1nswnC_nh5VoWFwWzT6imP28-KCf4rYvxDep_fwhP93-1wsetCTlw';
         console.log("Received token:", token);
 
         // Return a promise that resolves when Cello is initialized
